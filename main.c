@@ -44,12 +44,13 @@ void NextPlayerMove(String state[][3], int row, int col, int * cardinality, int 
 			strcpy(state[row-1][col-1], "DOS");
 		else
 			strcpy(state[row-1][col-1], "UNO");
+		(*cardinality)++;
 	}else{
 		strcpy(state[row-1][col-1], "FREE");
 		(*cardinality)--;
+		printf("[%d]\n");
 	}
 		
-	(*cardinality)++;
 }
 
 char * GameOver(String state[][3], int * over){
@@ -72,14 +73,14 @@ char * GameOver(String state[][3], int * over){
 		strcpy(who, "FREE");
 		
 	if(strcmp(who, "FREE") == 0)
-		return result;
+		return *result;
 	else{
 		if(strcmp(who, "UNO") == 0)
 			strcpy(result, "UNO wins");
 		else
 			strcpy(result, "DOS wins");
 		*over = 1;
-		return result;
+		return *result;
 	}		
 }
 
@@ -130,8 +131,8 @@ int main(){
 		}while(!isCoordinateValid(state, posRow, posCol, turn, turnCntPtr));
 	
 		NextPlayerMove(state, posRow, posCol, turnCntPtr, turn);
-		
-		printf("%s\n", GameOver(state, &over));
+		printf("X");
+	//	printf("%s\n", GameOver(state, &over));
 		system("cls");
 	}while(!over);
 	
