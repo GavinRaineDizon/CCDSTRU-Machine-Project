@@ -48,7 +48,6 @@ void NextPlayerMove(String state[][3], int row, int col, int * cardinality, int 
 	}else{
 		strcpy(state[row-1][col-1], "FREE");
 		(*cardinality)--;
-		printf("[%d]\n");
 	}
 		
 }
@@ -135,10 +134,10 @@ int main(){
 		NextPlayerMove(state, posRow, posCol, turnCntPtr, turn);
 		//changed this
 	    GameOver(state, &over);
-	
+	    if(!over){	
 	    	system("pause");
 			system("cls");
-		
+		}
 		//until here
 	}while(!over);
 	
