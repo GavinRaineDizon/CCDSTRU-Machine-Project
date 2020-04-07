@@ -48,12 +48,11 @@ void NextPlayerMove(String state[][3], int row, int col, int * cardinality, int 
 	}else{
 		strcpy(state[row-1][col-1], "FREE");
 		(*cardinality)--;
-		printf("[%d]\n");
 	}
 		
 }
-
-char * GameOver(String state[][3], int * over){
+//made changes
+void GameOver(String state[][3], int * over){
 	
 	char result[20] = {'\0'};
 	char who[5];
@@ -71,16 +70,17 @@ char * GameOver(String state[][3], int * over){
 		strcpy(who, state[1][0]);
 	else
 		strcpy(who, "FREE");
-		
-	if(strcmp(who, "FREE") == 0)
-		return *result;
+	if(strcmp(who, "FREE") == 0){	
+	}
 	else{
-		if(strcmp(who, "UNO") == 0)
+		if(strcmp(who, "UNO") == 0){
 			strcpy(result, "UNO wins");
-		else
+			printf("\n%s\n\n", result);}
+		else{
 			strcpy(result, "DOS wins");
+			printf("\n%s\n\n", result);
+		}
 		*over = 1;
-		return *result;
 	}		
 }
 
@@ -106,6 +106,7 @@ int main(){
 	int *turnCntPtr; 
 	int posRow = 0;
 	int posCol = 0;
+	int valid;
 	
 	initBoard(state);
 	do{
@@ -131,9 +132,13 @@ int main(){
 		}while(!isCoordinateValid(state, posRow, posCol, turn, turnCntPtr));
 	
 		NextPlayerMove(state, posRow, posCol, turnCntPtr, turn);
-		printf("X");
-	//	printf("%s\n", GameOver(state, &over));
-		system("cls");
+		//changed this
+	    GameOver(state, &over);
+	    if(!over){	
+	    	system("pause");
+			system("cls");
+		}
+		//until here
 	}while(!over);
 	
     return 0;
