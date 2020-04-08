@@ -13,11 +13,31 @@ void initBoard(String state[][3]){
 		
 }
 
+void displayError (String state[][3], int turn, int *turnCntPtr, int posRow, int posCol){
+	if (*turnCntPtr==3 && !turn && strcmp(state[posRow-1][posCol-1], "FREE")==0)
+		printf ("\n[INVALID] Please choose a tile that you own.\n");
+	else if(*turnCntPtr==3 && !turn && strcmp (state[posRow-1][posCol-1], "DOS")==0)
+		printf ("\n[INVALID] That's not your tile!\n");
+	else if(*turnCntPtr == 3 && turn && strcmp(state[posRow-1][posCol-1], "FREE")==0)
+		printf ("\n[INVALID] Please choose a tile that you own.\n");
+	else if (*turnCntPtr==3 && turn && strcmp (state[posRow-1][posCol-1], "UNO")==0)
+		printf ("\n[INVALID] That's not your tile!\n");
+	else if (!turn && *turnCntPtr<3 && strcmp (state[posRow-1][posCol-1], "UNO") == 0)
+		printf ("\n[INVALID] Please choose a free tile.\n");
+	else if (!turn && *turnCntPtr<3 && strcmp (state[posRow-1][posCol-1], "DOS") == 0)
+		printf ("\n[INVALID] Please choose a free tile.\n");
+	else if (turn && *turnCntPtr<3 && strcmp (state[posRow-1][posCol-1], "DOS") == 0)
+		printf ("\n[INVALID] Please choose a free tile.\n");
+	else if (turn && *turnCntPtr<3 && strcmp (state[posRow-1][posCol-1], "UNO") == 0)
+		printf ("\n[INVALID] Please choose a free tile.\n");
+}
+
 void printBoard(String state[][3]){
 
 	int i, j, k = 0;
 	//i, j intended for border formatting
-	// i, k intended for coordinates
+
+	// i, k intended for coordinates for thr row
 	for(i = 1; i < 12; i++){
 		if(i % 4 == 0){
 			for(j = 1; j < 21; j++){
@@ -57,22 +77,17 @@ void GameOver(String state[][3], int * over){
 	char result[20] = {'\0'};
 	char who[5];
 	
-	//DIAGONAL 1 WIN CONDITION
 	if(strcmp(state[0][0], state[1][1]) == 0 && strcmp(state[1][1], state[2][2]) == 0 && strcmp(state[2][2], "FREE") != 0)
 		strcpy(who, state[0][0]);
-	else if(strcmp(state[2][0], state[1][1]) == 0 && strcmp(state[1][1], state[2][0]) == 0 && strcmp(state[2][0], "FREE") != 0)
+	else if(strcmp(state[0][2], state[1][1]) == 0 && strcmp(state[1][1], state[2][0]) == 0 && strcmp(state[2][0], "FREE") != 0)
 		strcpy(who, state[2][0]);
-	else if(strcmp(state[0][1], state[1][1]) == 0 && strcmp(state[1][1], state[2][1]) == 0 && strcmp(state[2][1], "FREE") != 0)
-		strcpy(who, state[0][1]);
 	else if(strcmp(state[0][1], state[1][1]) == 0 && strcmp(state[1][1], state[2][1]) == 0 && strcmp(state[2][1], "FREE") != 0)
 		strcpy(who, state[0][1]);
 	else if(strcmp(state[1][0], state[1][1]) == 0 && strcmp(state[1][1], state[1][2]) == 0 && strcmp(state[1][2], "FREE") != 0)
 		strcpy(who, state[1][0]);
 	else
 		strcpy(who, "FREE");
-	if(strcmp(who, "FREE") == 0){	
-	}
-	else{
+	if(strcmp(who, "FREE") != 0){	
 		if(strcmp(who, "UNO") == 0){
 			strcpy(result, "UNO wins");
 			printf("\n%s\n\n", result);}
@@ -81,15 +96,15 @@ void GameOver(String state[][3], int * over){
 			printf("\n%s\n\n", result);
 		}
 		*over = 1;
-	}		
+	}
 }
 
 int isCoordinateValid(String state[][3], int posRow, int posCol, int turn, int *turnCntPtr){
 	
-	if(turn && strcmp(state[posRow - 1][posCol - 1],"UNO") == 0 || !turn && strcmp(state[posRow - 1][posCol - 1], "DOS") == 0 || 
-	*turnCntPtr == 3 && strcmp(state[posRow - 1][posCol - 1], "FREE") == 0 || 
-	((!turn && strcmp(state[posRow - 1][posCol - 1], "UNO") == 0 || turn && strcmp(state[posRow - 1][posCol - 1],"DOS") == 0) && *turnCntPtr < 3))
-		return  0;
+	if((turn && strcmp(state[posRow - 1][posCol - 1],"UNO") == 0) || (!turn && strcmp(state[posRow - 1][posCol - 1], "DOS") == 0) || 
+	(*turnCntPtr == 3 && strcmp(state[posRow - 1][posCol - 1], "FREE") == 0) ||
+	(((!turn && strcmp(state[posRow - 1][posCol - 1], "UNO") == 0) || (turn && strcmp(state[posRow - 1][posCol - 1], "DOS") == 0)) && *turnCntPtr < 3))
+		return 0;
 	else
 		return 1;
 }
@@ -106,7 +121,6 @@ int main(){
 	int *turnCntPtr; 
 	int posRow = 0;
 	int posCol = 0;
-	int valid;
 	
 	initBoard(state);
 	do{
@@ -123,21 +137,26 @@ int main(){
 			do{
 				printf("\nEnter row coordinate [1-3]: ");
 				scanf("%d", &posRow);				
+				if (!(posRow>0 && posRow<4))
+					printf("\n[INVALID] Enter a valid number from 1-3!\n");
 			}while(posRow <= 0 || posRow >= 4);
 			do{
 				printf("\nEnter column coordinate[1-3]: ");
-				scanf("%d", &posCol);					
+				scanf("%d", &posCol);		
+					if (!(posCol>0 && posCol<4))
+				printf ("\n[INVALID]Enter a valid number from 1-3!\n");		
 			}while(posCol <= 0 || posCol >= 4);
-		
+			displayError (state, turn, turnCntPtr, posRow, posCol);
 		}while(!isCoordinateValid(state, posRow, posCol, turn, turnCntPtr));
 	
 		NextPlayerMove(state, posRow, posCol, turnCntPtr, turn);
 		//changed this
+		system("cls");
 	    GameOver(state, &over);
-	    if(!over){	
-	    	system("pause");
-			system("cls");
-		}
+		if(over)
+			printBoard(state);
+			
+		
 		//until here
 	}while(!over);
 	
