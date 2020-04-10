@@ -88,13 +88,12 @@ void GameOver(String state[][3], int * over){
 	else
 		strcpy(who, "FREE");
 	if(strcmp(who, "FREE") != 0){	
-		if(strcmp(who, "UNO") == 0){
+		if(strcmp(who, "UNO") == 0)
 			strcpy(result, "UNO wins");
-			printf("\n%s\n\n", result);}
-		else{
+		else
 			strcpy(result, "DOS wins");
-			printf("\n%s\n\n", result);
-		}
+			
+		printf("%s\n\n", result);
 		*over = 1;
 	}
 }
@@ -110,29 +109,35 @@ int isCoordinateValid(String state[][3], int posRow, int posCol, int turn, int *
 }
 
 int main(){
-	//Variable Initialization
-	String state[3][3]; //x
-	int over = 0;
-	int turn = 1;
+//Variable Initialization
+	String state[3][3]; //Matrix [BOARD VALUES]
+	int over = 0; // Initilalizes that the game is not over
+	int turn = 1; // Initializes that it is Dos's turn
 	
 //Turn Cardinalities
 	int Uno = 0;
 	int Dos = 0;
-	int *turnCntPtr; 
+// Turn Pointer	
+	int *turnCntPtr;
+// Move Handler	 
 	int posRow = 0;
 	int posCol = 0;
 	
 	initBoard(state);
+		
 	do{
-		turn = !turn;
+		turn = !turn; //Shifts from true or false every iteration
+
 		if(turn)
 			turnCntPtr = &Dos;
 		else
 			turnCntPtr = &Uno;
 		
 		printBoard(state);
-		printf("\nIt is %s turn\n", turn ? "Dos's": "Uno's");
 		
+		printf("\nIt is %s turn\n", turn ? "Dos's": "Uno's");
+		printf("\n[%s]\n", *turnCntPtr == 3 ? "Please select a tile that you own to remove it": "Please select a free tile");
+			
 		do{
 			do{
 				printf("\nEnter row coordinate [1-3]: ");
@@ -150,17 +155,14 @@ int main(){
 		}while(!isCoordinateValid(state, posRow, posCol, turn, turnCntPtr));
 	
 		NextPlayerMove(state, posRow, posCol, turnCntPtr, turn);
-		//changed this
+		
 		system("cls");
 	    GameOver(state, &over);
 		if(over)
 			printBoard(state);
-			
 		
-		//until here
 	}while(!over);
 	
     return 0;
 }
-
 
