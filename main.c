@@ -57,10 +57,10 @@ void printBoard(String state[][3]){
 	}	
 }
 
-void NextPlayerMove(String state[][3], int row, int col, int * cardinality, int turn){
+void NextPlayerMove(String state[][3], int row, int col, int * cardinality, int * turn){
 		
 	if(*cardinality < 3){
-		if(turn)
+		if(*turn)
 			strcpy(state[row-1][col-1], "DOS");
 		else
 			strcpy(state[row-1][col-1], "UNO");
@@ -68,6 +68,7 @@ void NextPlayerMove(String state[][3], int row, int col, int * cardinality, int 
 	}else{
 		strcpy(state[row-1][col-1], "FREE");
 		(*cardinality)--;
+		*turn = !*turn;
 	}
 		
 }
@@ -118,7 +119,7 @@ int main(){
 	int Uno = 0;
 	int Dos = 0;
 // Turn Pointer	
-	int *turnCntPtr;
+	int *turnCntPtr = &Uno;
 // Move Handler	 
 	int posRow = 0;
 	int posCol = 0;
@@ -126,6 +127,7 @@ int main(){
 	initBoard(state);
 		
 	do{
+		
 		turn = !turn; //Shifts from true or false every iteration
 
 		if(turn)
@@ -135,8 +137,13 @@ int main(){
 		
 		printBoard(state);
 		
+		
+		
 		printf("\nIt is %s turn\n", turn ? "Dos's": "Uno's");
+		
 		printf("\n[%s]\n", *turnCntPtr == 3 ? "Please select a tile that you own to remove it": "Please select a free tile");
+			
+			
 			
 		do{
 			do{
@@ -154,7 +161,7 @@ int main(){
 			displayError (state, turn, turnCntPtr, posRow, posCol);
 		}while(!isCoordinateValid(state, posRow, posCol, turn, turnCntPtr));
 	
-		NextPlayerMove(state, posRow, posCol, turnCntPtr, turn);
+		NextPlayerMove(state, posRow, posCol, turnCntPtr, &turn);
 		
 		system("cls");
 	    GameOver(state, &over);
